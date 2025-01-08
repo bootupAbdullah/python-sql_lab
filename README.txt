@@ -62,9 +62,9 @@ crm_lab=# \d companies;
                                      Table "public.companies"
    Column   |         Type          | Collation | Nullable |                Default                
 ------------+-----------------------+-----------+----------+---------------------------------------
- id         | integer               |           | not null | nextval('companies_id_seq'::regclass)
+id         | integer               |           | not null | nextval('companies_id_seq'::regclass)
  name       | character varying(20) |           |          | 
- company_id | integer               |           |          | 
+ company_id  | integer               |           |          | 
 
 crm_lab=# \d employees;
                                       Table "public.employees"
