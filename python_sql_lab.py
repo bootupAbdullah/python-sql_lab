@@ -26,7 +26,7 @@ def quit():
     connection.close()
 
 
-# confirm add employee function
+# confirm add employee function, enables the user to inspect and finalize their input prior to the 'new employee' being added to the database. #2
 def confirmAddEmployee(employee):
     print(f"\nEmployee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
     confirm_employee = input("\nConfirm new Employee? (y/n): ")
@@ -55,7 +55,7 @@ def confirmAddEmployee(employee):
         confirmAddEmployee(employee) #retrys confirmation
 
 
-# add employee function
+# add employee function, enables user to add employee to database, initial prompt when 'add' is selected from 'main menu'
 def add_employee_to_db():
     # capture user inputs
     first_name = input("\nEnter the employees's first name: ")
@@ -89,7 +89,7 @@ def add_employee_to_db():
       
 
 
-# Confirm Update Employee
+# Confirm Update Employee, enables user to check input prior to commiting to update
 def confirmUpdateEmployee(employee):
     print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
     confirm_employee = input("\nConfirm new Employee? (y/n): ")
@@ -119,7 +119,7 @@ def confirmUpdateEmployee(employee):
 
 
 
-# update employee function
+# update employee function, enables user to update employee, initial prompt when 'update' is selected from 'main menu'
 def update_employee():
      
     cursor.execute("SELECT * FROM employees")
@@ -167,7 +167,7 @@ def update_employee():
             print("\nPlease Enter a numeric Employees")
 
 
-# Confirm employee deletion
+# Confirm employee deletion, enables user to confirm input prior to delete
 def confirmDeleteEmployee(employee):
         print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
         confirm_employee = input("\nConfirm deletion of this employee? (y/n): ")
@@ -195,7 +195,7 @@ def confirmDeleteEmployee(employee):
             print("\nInvalid selection. Please enter 'y' or 'n'.")
             confirmDeleteEmployee(employee) #retrys confirmation
 
-# DELETE Employee function
+# DELETE Employee function, enables user to delete employee, initial prompt when 'delete' is selected from 'main menu'
 def delete_employee():
 
     cursor.execute("SELECT * FROM employees")
@@ -231,7 +231,7 @@ def delete_employee():
          mainMenu() # redirect to main menu)
 
 
-# employee prompt
+# employee prompt, upon clicking view employee, user is prompted with seperate 'view menu'
 def employeeViewPrompt():
       
     employee_prompt = input('\nEnter Choice: ')
@@ -250,7 +250,7 @@ def employeeViewPrompt():
         print("\nInvalid selection. Please try again")
         employeeViewPrompt()
 
-#noEmployeePrompt
+#noEmployeePrompt, if database has no employees, the user is prompted with the following choice in the 'employee view menu'
 def noEmployeePrompt():
 
     no_employee_prompt = input('\nEnter Choice: ')
@@ -312,7 +312,7 @@ def mainMenu():
             print("\nCompany Results")
             for row in results:
                 print(f"ID: {row[0]} | Name: {row[1]} | Company ID: {row[2]}")
-
+                mainMenu()
     elif main_menu_prompt == '2':
         # put this in a function
        viewAllEmployees()
