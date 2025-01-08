@@ -26,36 +26,13 @@ def quit():
     connection.close()
 
 
-# confirm add employee function
-def confirmAddEmployee(employee):
-    print(f"\nEmployee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
-    confirm_employee = input("\nConfirm new Employee? (y/n): ")
-
-    if confirm_employee.lower() == 'y':
-        query = "INSERT INTO employees ( first_name, last_name, employer_id) VALUES (%s, %s, %s);"
-        try:
-            cursor.execute(query, (employee.first_name, employee.last_name, employee.employer_id))
-            connection.commit() # commits the created entry
-            print(f"\nEmployee {employee.first_name}, {employee.last_name} added successfully")
-            mainMenu() # callbacks to the main menu after creation
-        except psycopg2.IntegrityError as e:
-                connection.rollback()  # roolbacks the transaction on an error
-                print(f"\nDatabase error: {e}")
-                mainMenu() #callback main menu if error occurs
-        except psycopg2.Error as e: 
-                print(f"\nUnexpected error: {e}")
-                mainMenu() #callback main menu if error occurs
-
-    elif confirm_employee.lower() =='n':
-        print("\nCanceled action")
-        add_employee_to_db() #callbacks the add employee function if canceled
-    
-    else:
-        print("\nInvalid selection. Please enter 'y' or 'n'.")
-        confirmAddEmployee(employee) #retrys confirmation
+# <-------------------------------------------------------- CRUD FUNCTIONALITY  ------------------------------------------------------------------------------------>
 
 
-# add employee function
+
+#<--------------------- CREATE  ---------------------------------------------------->
+
+# add employee function, enables user to add employee to database, initial prompt when 'add' is selected from 'main menu'
 def add_employee_to_db():
     # capture user inputs
     first_name = input("\nEnter the employees's first name: ")
@@ -84,22 +61,20 @@ def add_employee_to_db():
             except ValueError:
                 print("\nPlease enter a numeric Company ID. ")
 
-        print(employer_id)
-
-      
+            #print(employer_id)
 
 
-# Confirm Update Employee
-def confirmUpdateEmployee(employee):
-    print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
+# confirm add employee function, enables the user to inspect and finalize their input prior to the 'new employee' being added to the database. #2
+def confirmAddEmployee(employee):
+    print(f"\nEmployee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
     confirm_employee = input("\nConfirm new Employee? (y/n): ")
 
     if confirm_employee.lower() == 'y':
-        query = "UPDATE employees SET first_name = %s, last_name = %s, employer_id = %s WHERE id = %s"
+        query = "INSERT INTO employees ( first_name, last_name, employer_id) VALUES (%s, %s, %s);"
         try:
-            cursor.execute(query, (employee.first_name, employee.last_name, employee.employer_id, employee.id))
+            cursor.execute(query, (employee.first_name, employee.last_name, employee.employer_id))
             connection.commit() # commits the created entry
-            print(f"\nEmployee {employee.first_name}, {employee.last_name} added successfully updated")
+            print(f"\nEmployee {employee.first_name}, {employee.last_name} added successfully")
             mainMenu() # callbacks to the main menu after creation
         except psycopg2.IntegrityError as e:
                 connection.rollback()  # roolbacks the transaction on an error
@@ -119,7 +94,9 @@ def confirmUpdateEmployee(employee):
 
 
 
-# update employee function
+#<---------------------UPDATE  ---------------------------------------------------->
+
+# update employee function, enables user to update employee, initial prompt when 'update' is selected from 'main menu'
 def update_employee():
      
     cursor.execute("SELECT * FROM employees")
@@ -167,35 +144,39 @@ def update_employee():
             print("\nPlease Enter a numeric Employees")
 
 
-# Confirm employee deletion
-def confirmDeleteEmployee(employee):
-        print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
-        confirm_employee = input("\nConfirm deletion of this employee? (y/n): ")
+# Confirm Update Employee - USER is prompted with input information to confirm update
+def confirmUpdateEmployee(employee):
+    print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
+    confirm_employee = input("\nConfirm new Employee? (y/n): ")
 
-        if confirm_employee.lower() == 'y':
-            query = "DELETE FROM employees WHERE id = %s"
-            try:
-                cursor.execute(query, (employee.id,))
-                connection.commit() # commits the created entry
-                print(f"\nEmployee successfully deleted")
-                mainMenu() # callbacks to the main menu after creation
-            except psycopg2.IntegrityError as e:
-                    connection.rollback()  # roolbacks the transaction on an error
-                    print(f"\nDatabase error: {e}")
-                    mainMenu() #callback main menu if error occurs
-            except psycopg2.Error as e: 
-                    print(f"\nUnexpected error: {e}")
-                    mainMenu() #callback main menu if error occurs
+    if confirm_employee.lower() == 'y':
+        query = "UPDATE employees SET first_name = %s, last_name = %s, employer_id = %s WHERE id = %s"
+        try:
+            cursor.execute(query, (employee.first_name, employee.last_name, employee.employer_id, employee.id))
+            connection.commit() # commits the created entry
+            print(f"\nEmployee {employee.first_name}, {employee.last_name} added successfully updated")
+            mainMenu() # callbacks to the main menu after creation
+        except psycopg2.IntegrityError as e:
+                connection.rollback()  # roolbacks the transaction on an error
+                print(f"\nDatabase error: {e}")
+                mainMenu() #callback main menu if error occurs
+        except psycopg2.Error as e: 
+                print(f"\nUnexpected error: {e}")
+                mainMenu() #callback main menu if error occurs
 
-        elif confirm_employee.lower() =='n':
-            print("\nAction cancelled.")
-            viewAllEmployees() #callbacks to viewing all employees function if canceled
-        
-        else:
-            print("\nInvalid selection. Please enter 'y' or 'n'.")
-            confirmDeleteEmployee(employee) #retrys confirmation
+    elif confirm_employee.lower() =='n':
+        print("\nCanceled action")
+        add_employee_to_db() #callbacks the add employee function if canceled
+    
+    else:
+        print("\nInvalid selection. Please enter 'y' or 'n'.")
+        confirmAddEmployee(employee) #retrys confirmation
 
-# DELETE Employee function
+
+
+# <---------------------DELETE  ---------------------------------------------------->
+
+# DELETE Employee function, enables user to delete employee, initial prompt when 'delete' is selected from 'main menu'
 def delete_employee():
 
     cursor.execute("SELECT * FROM employees")
@@ -231,41 +212,65 @@ def delete_employee():
          mainMenu() # redirect to main menu)
 
 
-# employee prompt
-def employeeViewPrompt():
-      
-    employee_prompt = input('\nEnter Choice: ')
+# Confirm employee deletion, enables user to confirm input prior to delete
+def confirmDeleteEmployee(employee):
+        print(f"\n Employee Id: {employee.id}, Employee: {employee.first_name} {employee.last_name}, Employer ID: {employee.employer_id}")
+        confirm_employee = input("\nConfirm deletion of this employee? (y/n): ")
+
+        if confirm_employee.lower() == 'y':
+            query = "DELETE FROM employees WHERE id = %s"
+            try:
+                cursor.execute(query, (employee.id,))
+                connection.commit() # commits the created entry
+                print(f"\nEmployee successfully deleted")
+                mainMenu() # callbacks to the main menu after creation
+            except psycopg2.IntegrityError as e:
+                    connection.rollback()  # roolbacks the transaction on an error
+                    print(f"\nDatabase error: {e}")
+                    mainMenu() #callback main menu if error occurs
+            except psycopg2.Error as e: 
+                    print(f"\nUnexpected error: {e}")
+                    mainMenu() #callback main menu if error occurs
+
+        elif confirm_employee.lower() =='n':
+            print("\nAction cancelled.")
+            viewAllEmployees() #callbacks to viewing all employees function if canceled
         
-    if employee_prompt == '1':
-        add_employee_to_db()
-    elif employee_prompt =='2':
-        update_employee()
-    elif employee_prompt == '3':
-        delete_employee()
-    elif employee_prompt == '4':
-        mainMenu()
-    elif employee_prompt == '5':
+        else:
+            print("\nInvalid selection. Please enter 'y' or 'n'.")
+            confirmDeleteEmployee(employee) #retrys confirmation
+
+
+# <-------------------------------------------------------- MAIN MENU VIEW ------------------------------------------------------------------------------------>
+# Main Menu Function
+def mainMenu():
+
+    print('Welcome to CRM')
+
+    print('\nWhat would you like to do, please choose one of the following: ')
+    print('\n1. See Companies')
+    print('2. See Employees')
+    print('3. Quit')
+    main_menu_prompt = input('\nEnter Choice: ')
+
+    if main_menu_prompt == '1':
+        cursor.execute('SELECT * FROM companies')
+        results = cursor.fetchall()
+        if results:
+            print("\nCompany Results")
+            for row in results:
+                print(f"ID: {row[0]} | Name: {row[1]} | Company ID: {row[2]}")
+                mainMenu()
+    elif main_menu_prompt == '2':
+        # put this in a function
+       viewAllEmployees()
+
+    elif main_menu_prompt == '3':
         quit()
-    else:
-        print("\nInvalid selection. Please try again")
-        employeeViewPrompt()
 
-#noEmployeePrompt
-def noEmployeePrompt():
+# <-------------------------------------------------------- SECONDARY MENU once user has clicked '2. See Employees' ------------------------------------------->
 
-    no_employee_prompt = input('\nEnter Choice: ')
-
-    if no_employee_prompt == '1':
-            add_employee_to_db()
-    elif no_employee_prompt == '2':
-            mainMenu()
-    elif no_employee_prompt == '3':
-        quit()
-    else:
-        print("\nInvalid selection. Please try again")
-        noEmployeePrompt()
-
-# view employees
+# view employees - INITIAL VIEW
 def viewAllEmployees():
         cursor.execute('SELECT * FROM employees')
         results = cursor.fetchall()
@@ -293,32 +298,41 @@ def viewAllEmployees():
             noEmployeePrompt()
 
 
- 
-# Main Menu Function
-def mainMenu():
-
-    print('Welcome to CRM')
-
-    print('\nWhat would you like to do, please choose one of the following: ')
-    print('\n1. See Companies')
-    print('2. See Employees')
-    print('3. Quit')
-    main_menu_prompt = input('\nEnter Choice: ')
-
-    if main_menu_prompt == '1':
-        cursor.execute('SELECT * FROM companies')
-        results = cursor.fetchall()
-        if results:
-            print("\nCompany Results")
-            for row in results:
-                print(f"ID: {row[0]} | Name: {row[1]} | Company ID: {row[2]}")
-
-    elif main_menu_prompt == '2':
-        # put this in a function
-       viewAllEmployees()
-
-    elif main_menu_prompt == '3':
+# employee prompt - FUNCTIONALITY FOR INITIAL VIEW ABOVE (IF EMPLOYEES EXIST IN THE DATABASE)
+def employeeViewPrompt():
+      
+    employee_prompt = input('\nEnter Choice: ')
+        
+    if employee_prompt == '1':
+        add_employee_to_db()
+    elif employee_prompt =='2':
+        update_employee()
+    elif employee_prompt == '3':
+        delete_employee()
+    elif employee_prompt == '4':
+        mainMenu()
+    elif employee_prompt == '5':
         quit()
+    else:
+        print("\nInvalid selection. Please try again")
+        employeeViewPrompt()
+
+
+#noEmployeePrompt - FUNCTIONALITY FOR INITIAL VIEW (IF EMPLOYEES DO NOT EXIST IN THE DATABASE)
+def noEmployeePrompt():
+
+    no_employee_prompt = input('\nEnter Choice: ')
+
+    if no_employee_prompt == '1':
+            add_employee_to_db()
+    elif no_employee_prompt == '2':
+            mainMenu()
+    elif no_employee_prompt == '3':
+        quit()
+    else:
+        print("\nInvalid selection. Please try again")
+        noEmployeePrompt()
+
 
 
 # Main Menu Callback to initialize CRM
